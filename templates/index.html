@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Список задач</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 40px 16px;
+      background: #eef2f6; color: #1e293b;
+      font-family: Arial, sans-serif;
+    }
+    main {
+      max-width: 760px; margin: auto; padding: 28px;
+      background: white; border-radius: 18px;
+      box-shadow: 0 10px 35px #00000010;
+    }
+    h1 { margin-top: 0; }
+    .add, .task, .actions {
+      display: flex; gap: 10px; align-items: center;
+    }
+    input {
+      flex: 1; min-width: 0; padding: 12px;
+      border: 1px solid #cbd5e1; border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 11px 14px; border: 0; border-radius: 8px;
+      background: #2563eb; color: white; cursor: pointer;
+    }
+    .task {
+      justify-content: space-between;
+      padding: 16px 0; border-bottom: 1px solid #e2e8f0;
+    }
+    .title { overflow-wrap: anywhere; min-width: 0; }
+    .done { text-decoration: line-through; color: #64748b; }
+    .delete { background: #dc2626; }
+    .empty, footer { color: #64748b; }
+    footer { margin-top: 24px; font-size: 14px; }
+    @media (max-width: 600px) {
+      .task { align-items: flex-start; flex-direction: column; }
+      .add { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Список задач</h1>
+  <form class="add" action="/add" method="post">
+    <input name="title" placeholder="Новая задача"
+           required maxlength="200" aria-label="Новая задача">
+    <button type="submit">Добавить</button>
+  </form>
+
+  {% for task in tasks %}
+  <div class="task">
+    <span class="title {% if task['done'] %}done{% endif %}">
+      {{ task['title'] }}
+    </span>
+    <div class="actions">
+      <form action="/toggle/{{ task['id'] }}" method="post">
+        <button type="submit">
+          {% if task['done'] %}Вернуть{% else %}Выполнено{% endif %}
+        </button>
+      </form>
+      <form action="/delete/{{ task['id'] }}" method="post">
+        <button class="delete" type="submit">Удалить</button>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <p class="empty">Задач пока нет. Добавьте первую.</p>
+  {% endfor %}
+
+  <footer>Flask · SQLite · Docker</footer>
+</main>
+</body>
+</html>
